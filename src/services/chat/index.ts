@@ -47,7 +47,7 @@ export const chatService = {
   },
 
   load: async (id: string): Promise<DefaultResponse<OutputDataLoadChat>> => {
-    const request = await fetch(`/api/chat/${id}`, { method: "GET" });
+    const request = await fetch(`${baseURL}/api/chat/${id}`, { method: "GET" });
 
     const data = await request.json();
 
