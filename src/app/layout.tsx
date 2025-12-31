@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-// @ts-expect-error: error in type for import (i don't know fix this...)
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SWRProvider } from "@/providers/swr.providers";
