@@ -14,7 +14,7 @@ export const chatService = {
     id: string,
     data: InputUpdateChat
   ): Promise<{ success: boolean }> => {
-    const request = await fetch(`${baseURL}/api/chat/${id}`, {
+    const request = await fetch(`/api/chat/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -37,7 +37,7 @@ export const chatService = {
   },
 
   create: async (userId: string): Promise<string> => {
-    const request = await fetch(`${baseURL}/api/chat`, {
+    const request = await fetch(`/api/chat`, {
       method: "POST",
       body: JSON.stringify({ userId }),
     });
@@ -47,7 +47,7 @@ export const chatService = {
   },
 
   load: async (id: string): Promise<DefaultResponse<OutputDataLoadChat>> => {
-    const request = await fetch(`${baseURL}/api/chat/${id}`, { method: "GET" });
+    const request = await fetch(`/api/chat/${id}`, { method: "GET" });
 
     const data = await request.json();
 
@@ -55,7 +55,7 @@ export const chatService = {
   },
 
   delete: async (id: string): Promise<{ success: boolean }> => {
-    const request = await fetch(`${baseURL}/api/chat/${id}`, {
+    const request = await fetch(`/api/chat/${id}`, {
       method: "DELETE",
     });
 
