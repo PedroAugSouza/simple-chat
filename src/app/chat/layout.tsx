@@ -11,7 +11,7 @@ export default function ChatLayout({
 }) {
   return (
     <main className="h-screen grid place-items-center">
-      <section className="flex flex-row h-204">
+      <section className="flex flex-row h-screen w-full">
         <Sidebar />
         {children}
       </section>

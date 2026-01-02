@@ -120,13 +120,13 @@ export function Chat({
   }, [copied]);
 
   return (
-    <Card className="w-2xl border  p-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between ">
+    <Card className=" flex-1 border p-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between ">
       <header className="w-full py-2 px-4 bg-gray-50 text-gray-800 font-medium mb-1 ">
         <h1 className="text-sm">{name}</h1>
       </header>
       <Separator />
 
-      <section className=" h-full pt-4 px-7 overflow-auto w-full">
+      <section className=" h-full pt-4 px-62 overflow-auto w-full">
         <AnimatePresence>
           {messages.map((m) => {
             const message = m as MessageWithReasoning;
@@ -224,7 +224,7 @@ export function Chat({
       </section>
 
       <form
-        className="w-full p-2 flex gap-2"
+        className="w-full py-2 px-62 flex gap-2"
         onSubmit={handleSubmit((data) => {
           sendMessage({
             text: data.userMessage,
