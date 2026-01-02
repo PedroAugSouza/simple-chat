@@ -30,7 +30,9 @@ export default function Login() {
   return (
     <main className="h-screen grid place-items-center">
       <Card className="p-6 rounded-xl w-md  gap-0">
-        <h1 className="text-foreground font-semibold text-2xl">Simple Chat</h1>
+        <p className="text-2xl font-bold tracking-tighter flex items-center gap-1">
+          Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
+        </p>
         <CardDescription className="font-normal">
           Seu chat de IA com personalidade de forma simples.
         </CardDescription>

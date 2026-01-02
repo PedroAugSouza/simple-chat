@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 
 const BackgroundGrid: React.FC = () => {
   return (
-    <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]">
+    <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px 16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent 100%)]">
       <div className="absolute inset-0 border-b border-neutral-200/50"></div>
     </div>
   );
@@ -66,18 +66,16 @@ const ChatInterface: React.FC = () => {
   const targetText = "Sim, merge e excluir branch.";
 
   useEffect(() => {
-    // Aumentei um pouco o tempo de cada passo para dar tempo de ler e ver a animação
     const timer = setInterval(() => {
       setStep((prev) => (prev < 3 ? prev + 1 : 0));
     }, 3500);
     return () => clearInterval(timer);
   }, []);
 
-  // Efeito de digitação realista
   useEffect(() => {
     if (step === 2) {
       let currentIndex = 0;
-      // Inicia a digitação
+
       const typingInterval = setInterval(() => {
         if (currentIndex <= targetText.length) {
           setTypedText(targetText.slice(0, currentIndex));
@@ -85,18 +83,16 @@ const ChatInterface: React.FC = () => {
         } else {
           clearInterval(typingInterval);
         }
-      }, 50 + Math.random() * 20); // 50ms base + variação aleatória para realismo
+      }, 50 + Math.random() * 20);
 
       return () => clearInterval(typingInterval);
     } else if (step === 0) {
-      // Reseta o texto quando o loop reinicia
       setTypedText("");
     }
   }, [step]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white border border-black rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col h-[500px]">
-      {/* Window Header */}
+    <div className="w-full max-w-2xl mx-auto bg-white border border-black rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col h-125">
       <div className="bg-neutral-50 border-b border-black p-3 flex items-center justify-between">
         <div className="flex gap-2">
           <div className="w-3 h-3 rounded-full border border-black bg-white"></div>
@@ -110,14 +106,11 @@ const ChatInterface: React.FC = () => {
         <div className="w-10"></div>
       </div>
 
-      {/* Chat Area */}
       <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden relative">
-        {/* Background Hint */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
           <span className="font-bold text-9xl tracking-tighter">S.</span>
         </div>
 
-        {/* Message 1: User */}
         <div className="flex gap-4 items-start animate-in slide-in-from-bottom-2 duration-500 fade-in">
           <div className="w-8 h-8 rounded border border-black bg-white flex items-center justify-center shrink-0">
             <User size={16} />
@@ -136,7 +129,6 @@ const ChatInterface: React.FC = () => {
           </div>
         </div>
 
-        {/* Message 2: Bot Response (Animated) */}
         <div
           className={`flex gap-4 items-start transition-opacity duration-500 ${
             step >= 1 ? "opacity-100" : "opacity-0"
@@ -183,7 +175,6 @@ const ChatInterface: React.FC = () => {
           </div>
         </div>
 
-        {/* Message 3: Input Simulation */}
         <div
           className={`mt-auto transition-opacity duration-500 ${
             step >= 2 ? "opacity-100" : "opacity-0"
@@ -231,13 +222,12 @@ const Header: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         <a
-          href="#"
+          href="/login"
           className="text-2xl font-bold tracking-tighter flex items-center gap-1"
         >
-          Simple<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
+          Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
         </a>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
@@ -266,7 +256,6 @@ const Header: React.FC = () => {
           </Button>
         </div>
 
-        {/* Mobile Toggle */}
         <button
           className="md:hidden p-2 text-black"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -275,7 +264,6 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-white border-b border-black p-6 md:hidden flex flex-col gap-6 shadow-xl animate-in slide-in-from-top-5">
           {navLinks.map((link) => (
@@ -327,7 +315,6 @@ export default function LandinPage() {
     <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white relative overflow-x-hidden">
       <Header />
 
-      {/* HERO SECTION */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
         <BackgroundGrid />
 
@@ -385,7 +372,6 @@ export default function LandinPage() {
           </div>
 
           <div className="relative">
-            {/* Decorative Elements behind chat */}
             <div className="absolute -top-10 -right-10 w-24 h-24 bg-neutral-100 pattern-dots opacity-50"></div>
             <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-neutral-50 rounded-full blur-3xl"></div>
 
@@ -394,7 +380,6 @@ export default function LandinPage() {
         </div>
       </section>
 
-      {/* PERSONALITIES SECTION */}
       <section id="personalities" className="py-24 border-t border-neutral-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16 md:flex justify-between items-end">
@@ -414,7 +399,6 @@ export default function LandinPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Persona 1 */}
             <div className="p-8 bg-black text-white rounded-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-32 bg-neutral-800/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-neutral-700/50 transition-all"></div>
               <Terminal className="w-10 h-10 mb-6 text-neutral-400" />
@@ -435,7 +419,6 @@ export default function LandinPage() {
               </ul>
             </div>
 
-            {/* Persona 2 */}
             <div className="p-8 border border-neutral-200 rounded-xl hover:border-black transition-colors group bg-neutral-50">
               <PenTool className="w-10 h-10 mb-6 text-black" />
               <h3 className="text-xl font-bold font-mono mb-2">A Musa</h3>
@@ -455,7 +438,6 @@ export default function LandinPage() {
               </ul>
             </div>
 
-            {/* Persona 3 */}
             <div className="p-8 border border-neutral-200 rounded-xl hover:border-black transition-colors group bg-white">
               <Layout className="w-10 h-10 mb-6 text-black" />
               <h3 className="text-xl font-bold font-mono mb-2">
@@ -481,12 +463,10 @@ export default function LandinPage() {
         </div>
       </section>
 
-      {/* INTEGRATIONS SECTION */}
       <section
         id="integrations"
         className="py-24 bg-black text-white relative overflow-hidden"
       >
-        {/* Abstract pattern */}
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
           <div className="absolute right-0 top-0 w-96 h-96 bg-neutral-800 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
         </div>
@@ -544,7 +524,6 @@ export default function LandinPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="py-12 border-t border-neutral-200 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col gap-2">
