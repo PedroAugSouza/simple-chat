@@ -81,7 +81,7 @@ export default function ChatLayout({
                           className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
                           onClick={() => {
                             chatService.delete(chat.id).then(() => {
-                              const chatId = pathname.split("/")[2];
+                              const chatId = pathname?.split("/")[2];
                               if (chatId === chat.id) {
                                 push("/chat");
                               }

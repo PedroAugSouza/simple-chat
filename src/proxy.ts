@@ -10,17 +10,13 @@ export function proxy(request: NextRequest) {
 
   if (
     pathname.startsWith("/api") ||
+    // pathname === "/" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico")
   ) {
     return NextResponse.next();
   }
-
-  if (pathname === "/") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
+  if (PUBLIC_ROUTES.has(pathname)) return NextResponse.next();
 
   const token = request.cookies.get("token")?.value;
 
