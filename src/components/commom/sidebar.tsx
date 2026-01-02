@@ -53,7 +53,7 @@ export const Sidebar = () => {
             {chats?.map((chat) => (
               <li
                 key={chat.id}
-                className="flex flex-row justify-between group hover:bg-gray-100 rounded-md py-1 px-2 group"
+                className="flex flex-row justify-between group hover:bg-gray-100 rounded py-1 px-2 group"
               >
                 <Link
                   href={`/chat/${chat.id}`}
@@ -68,7 +68,7 @@ export const Sidebar = () => {
                     <EllipsisVertical size={18} />
                   </PopoverTrigger>
                   <PopoverContent
-                    className="p-2 rounded-lg w-28 bg-background/80 backdrop-blur-[2px] flex flex-col"
+                    className="p-2 rounded-none w-28 bg-background/80 backdrop-blur-[2px] flex flex-col"
                     side="right"
                   >
                     <button
@@ -92,7 +92,7 @@ export const Sidebar = () => {
           </ul>
           <Link
             href="/chat/settings"
-            className="flex items-center justify-center gap-2 p-2 px-4 bg-gray-100 cursor-pointer rounded-md text-gray-800"
+            className="flex items-center justify-center gap-2 p-2 px-4 bg-foreground cursor-pointer rounded-lg text-accent"
           >
             <Cog size={18} />
             <span>Configurações</span>

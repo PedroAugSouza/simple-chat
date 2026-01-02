@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { Copy, RefreshCcw, Send } from "lucide-react";
+import { ChevronDown, Copy, RefreshCcw, Send } from "lucide-react";
 
 import { Markdown } from "@/components/commom/markdown";
 import {
@@ -30,6 +30,14 @@ import { Separator } from "@/components/ui/separator";
 import { agentsService } from "@/services/agents";
 import { chatService } from "@/services/chat";
 import { mutate } from "swr";
+import { MessageAssistant } from "@/components/commom/message-assistant.chat";
+import { MessageUser } from "@/components/commom/message-user.chat";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 const chatSchema = z.object({
   userMessage: z.string().nonempty(),
@@ -48,11 +56,12 @@ export function Chat({
   initialMessages?: UIMessage[];
   name: string;
 }) {
-  const baseURL = process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `${process.env.NEXT_PUBLIC_VERCEL_URL}`
-    : "http://localhost:3000";
+  const pathname = usePathname();
+  const { push } = useRouter();
 
   const endRef = useRef<HTMLDivElement>(null);
+
+  const titleRef = useRef<HTMLButtonElement>(null);
 
   const { messages, sendMessage, status } = useChat({
     id,
@@ -90,134 +99,50 @@ export function Chat({
     scrollToBottom();
   }, [messages, status]);
 
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyContent = async (content: string) => {
-    try {
-      await navigator.clipboard.writeText(content);
-      setCopied(true);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = content;
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      try {
-        document.execCommand("copy");
-        setCopied(true);
-      } finally {
-        document.body.removeChild(textarea);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (!copied) return;
-    const timeout = setTimeout(() => setCopied(false), 1800);
-    return () => clearTimeout(timeout);
-  }, [copied]);
-
   return (
     <Card className=" flex-1 border p-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between ">
-      <header className="w-full py-2 px-4 bg-gray-50 text-gray-800 font-medium mb-1 ">
-        <h1 className="text-sm">{name}</h1>
+      <header className="w-full  px-4 bg-gray-50 text-gray-800 font-medium mb-1 grid place-items-center">
+        <Popover>
+          <PopoverTrigger
+            ref={titleRef}
+            className="h-full py-2 flex items-center gap-2"
+          >
+            <h1 className="text-sm">{name}</h1>
+            <ChevronDown size={18} />
+          </PopoverTrigger>
+          <PopoverContent
+            className="p-2 rounded-lg  bg-background/80 backdrop-blur-[2px] flex flex-col"
+            side="bottom"
+            style={{ width: titleRef?.current?.clientWidth }}
+          >
+            <button
+              className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
+              onClick={() => {
+                chatService.delete(id!).then(() => {
+                  const chatId = pathname?.split("/")[2];
+                  if (chatId === id) {
+                    push("/chat");
+                  }
+                  mutate("get-chats");
+                });
+              }}
+            >
+              Exluir
+            </button>
+          </PopoverContent>
+        </Popover>
       </header>
       <Separator />
 
       <section className=" h-full pt-4 px-62 overflow-auto w-full">
         <AnimatePresence>
-          {messages.map((m) => {
-            const message = m as MessageWithReasoning;
-            return (
-              <motion.div
-                key={message.id}
-                layout="position"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div
-                  key={message.id}
-                  className={
-                    "w-full flex " +
-                    (message.role === "user" ? "justify-end" : "justify-start ")
-                  }
-                >
-                  <div
-                    className={cn({
-                      "py-2 px-3 bg-gray-200 rounded-b-xl rounded-l-xl ":
-                        message.role === "user",
-                      "h-full": message.role === "assistant",
-                    })}
-                  >
-                    {message.parts.filter((p) => p.type === "reasoning")
-                      .length > 0 && (
-                      <details
-                        className="mb-2 text-sm text-gray-500 italic"
-                        key={`${message.id}-reasoning`}
-                      >
-                        <summary className="cursor-pointer hover:text-gray-700">
-                          Ver processo de pensamento...
-                        </summary>
-                        {message.parts
-                          .filter((p) => p.type === "reasoning")
-                          .map((p, index) => (
-                            <div
-                              className="ml-3 not-first:mt-0.5"
-                              key={`${message.id}-reasoning-${index}}`}
-                            >
-                              <Markdown>{p.text}</Markdown>
-                            </div>
-                          ))}
-                      </details>
-                    )}
-                    {message.parts.map((part, i) => {
-                      switch (part.type) {
-                        case "text":
-                          return (
-                            <Markdown key={`${message.id}-${i}-text`}>
-                              {part.text}
-                            </Markdown>
-                          );
-                      }
-                    })}
-                  </div>
-                </div>
-                <div className="mt-1 h-8 ">
-                  {message.role === "assistant" && status === "ready" && (
-                    <div className="flex flex-row gap-1 border-t">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            className={cn(
-                              "cursor-pointer rounded-full p-1 transition-colors",
-                              copied && "bg-zinc-200"
-                            )}
-                            onClick={() =>
-                              handleCopyContent(
-                                //@ts-expect-error: type error, fix later
-                                message.parts[message.parts.length - 1].text
-                              )
-                            }
-                            aria-label="Copiar mensagem"
-                          >
-                            <Copy size={14} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {copied ? "Copiado!" : "Copiar"}
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+          {messages.map((m) =>
+            m.role === "assistant" ? (
+              <MessageAssistant {...m} status={status} key={m.id} />
+            ) : (
+              <MessageUser {...m} key={m.id} />
+            )
+          )}
         </AnimatePresence>
 
         <div key="end-anchor" ref={endRef} className="h-4 shrink-0" />
