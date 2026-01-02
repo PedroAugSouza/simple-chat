@@ -6,6 +6,9 @@ export const settingsService = {
   get: async (userId: string): Promise<DefaultResponse<OutputGetSettings>> => {
     const request = await fetch(`${baseURL}/api/settings/${userId}`, {
       method: "GET",
+      headers: {
+        Connection: "keep-alive",
+      },
     });
 
     const data = await request.json();
@@ -18,6 +21,9 @@ export const settingsService = {
   ): Promise<{ success: boolean }> => {
     const request = await fetch(`${baseURL}/api/settings/${userId}`, {
       method: "PATCH",
+      headers: {
+        Connection: "keep-alive",
+      },
       body: JSON.stringify(data),
     });
 

@@ -2,7 +2,7 @@
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 
-interface TokenPayload {
+export interface TokenPayload {
   id: string;
   username: string;
   email: string;

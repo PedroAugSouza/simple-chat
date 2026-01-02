@@ -15,6 +15,7 @@ import {
   MessageSquare,
   PenTool,
   Zap,
+  Globe,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -100,8 +101,8 @@ const ChatInterface: React.FC = () => {
           <div className="w-3 h-3 rounded-full border border-black bg-neutral-400"></div>
         </div>
         <div className="font-mono text-xs text-neutral-500 flex items-center gap-2">
-          <Terminal size={12} />
-          <span>simple-cli — v2.0.4</span>
+          <Globe size={12} />
+          <span>simple chat</span>
         </div>
         <div className="w-10"></div>
       </div>
