@@ -28,12 +28,12 @@ export function LoginModule() {
     }
   };
   return (
-    <main className="h-screen grid place-items-center">
-      <Card className="p-6 rounded-xl w-md  gap-0">
+    <main className="h-screen grid place-items-center leading-relaxed ">
+      <Card className="p-6 rounded w-md  gap-0">
         <p className="text-2xl font-bold tracking-tighter flex items-center gap-1">
           Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
         </p>
-        <CardDescription className="font-normal">
+        <CardDescription className="font-medium font-mono">
           Seu chat de IA com personalidade de forma simples.
         </CardDescription>
         <form
@@ -44,6 +44,7 @@ export function LoginModule() {
             <Label>Email</Label>
             <Input
               placeholder="Insira seu email."
+              className="rounded-none"
               type="email"
               {...register("email")}
             />
@@ -53,10 +54,11 @@ export function LoginModule() {
             <Input
               placeholder="Insira sua senha."
               type="password"
+              className="rounded-none"
               {...register("password")}
             />
           </div>
-          <Button className="w-full">Entrar</Button>
+          <Button className="w-full rounded-none">Entrar</Button>
         </form>
         <Separator className="mt-4" />
 

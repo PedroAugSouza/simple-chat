@@ -37,19 +37,23 @@ export const Sidebar = () => {
     <aside className="h-full flex flex-col border border-r-transparent w-72 rounded-l-xl p-2 overflow-hidden">
       {pathname !== "/chat/settings" ? (
         <>
+          <p className="text-2xl font-bold tracking-tighter flex items-center gap-1 px-2 my-1">
+            Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
+          </p>
+          <Separator />
           <button
             onClick={handleCreateChat}
-            className="flex items-center justify-start gap-2 py-2 px-4 hover:bg-gray-100 cursor-pointer rounded-md text-sm mb-1"
+            className="flex items-center justify-start gap-2 py-2 px-4 hover:bg-gray-100 cursor-pointer rounded-md text-sm mt-1"
           >
             <Plus size={16} />
             <span>Criar chat</span>
           </button>
-          <Separator />
+
           <ul className="flex flex-col w-full flex-1">
             {chats?.map((chat) => (
               <li
                 key={chat.id}
-                className="flex flex-row justify-between group hover:bg-gray-100 rounded-md py-1 px-2 first:mt-2"
+                className="flex flex-row justify-between group hover:bg-gray-100 rounded-md py-1 px-2 group"
               >
                 <Link
                   href={`/chat/${chat.id}`}
@@ -60,7 +64,7 @@ export const Sidebar = () => {
                 </Link>
 
                 <Popover>
-                  <PopoverTrigger className="text-zinc-600 cursor-pointer">
+                  <PopoverTrigger className="text-zinc-600 cursor-pointer group-hover:opacity-100 opacity-0">
                     <EllipsisVertical size={18} />
                   </PopoverTrigger>
                   <PopoverContent
