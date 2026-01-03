@@ -28,14 +28,6 @@ export const GET = async (req: Request) => {
 
   console.log(body);
 
-  /** my access token
-   * {
-        access_token: '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',
-        token_type: 'bearer',
-        scope: ''
-      }
-   *  */
-
   const session = await getSessionServer();
 
   await prisma.integration.create({
