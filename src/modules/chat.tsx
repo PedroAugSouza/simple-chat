@@ -95,6 +95,8 @@ export function Chat({
     });
   };
 
+  const lastMessage = messages[messages.length - 1];
+
   useLayoutEffect(() => {
     scrollToBottom();
   }, [messages, status]);
@@ -134,22 +136,27 @@ export function Chat({
       </header>
       <Separator />
 
-      <section className=" h-full pt-4 px-62 overflow-auto w-full">
+      <section className=" h-full pt-4 3xl:px-62 xl:px-28 lg:px-20 md:px-8 px-2 overflow-auto w-full">
         <AnimatePresence>
-          {messages.map((m) =>
-            m.role === "assistant" ? (
-              <MessageAssistant {...m} status={status} key={m.id} />
+          {messages.map((m) => {
+            return m.role === "assistant" ? (
+              <MessageAssistant
+                {...m}
+                isLastMessage={lastMessage.id === m.id}
+                status={status}
+                key={m.id}
+              />
             ) : (
               <MessageUser {...m} key={m.id} />
-            )
-          )}
+            );
+          })}
         </AnimatePresence>
 
         <div key="end-anchor" ref={endRef} className="h-4 shrink-0" />
       </section>
 
       <form
-        className="w-full py-2 px-62 flex gap-2"
+        className="w-full py-2  3xl:px-62 xl:px-28 lg:px-20 md:px-8 px-2  flex gap-2"
         onSubmit={handleSubmit((data) => {
           sendMessage({
             text: data.userMessage,

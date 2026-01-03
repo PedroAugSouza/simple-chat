@@ -1,14 +1,7 @@
 "use client";
-import { PlatformIcon } from "@/components/commom/platform-icon";
 import { Platform } from "@/components/commom/platform.settings";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -18,15 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+
 import { AnthropicIcon } from "@/icons";
 import { integrationService } from "@/services/integrations";
 import { settingsService } from "@/services/settings";
 import { InputUpdateSetting } from "@/services/settings/contracts";
 import { getSession } from "@/utils/get-session";
 import { deleteCookie } from "cookies-next";
-import { Github } from "lucide-react";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useSWR, { mutate } from "swr";

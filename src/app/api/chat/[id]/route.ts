@@ -38,9 +38,13 @@ export async function POST(
 
   console.log(settings);
 
-  const anthropic = createAnthropic({
-    apiKey: settings?.apiKey ?? ENV.ANTHROPIC_API_KEY,
-  });
+  const apiKey = settings?.apiKey
+    ? settings?.apiKey === ""
+      ? ENV.ANTHROPIC_API_KEY
+      : settings?.apiKey
+    : ENV.ANTHROPIC_API_KEY;
+
+  const anthropic = createAnthropic({ apiKey });
 
   const mid = wrapLanguageModel({
     model: anthropic(settings?.model ?? "claude-3-7-sonnet-latest"),
