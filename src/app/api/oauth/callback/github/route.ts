@@ -1,3 +1,4 @@
+import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
 import { getSessionServer } from "@/utils/get-session.server";
 import { NextResponse } from "next/server";
@@ -10,7 +11,7 @@ export const GET = async (req: Request) => {
 
   const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 
-  const url = new URL("https://github.com/login/oauth/access_token");
+  const url = new URL(ENV.GITHUB_AUTH_URL ?? "");
 
   url.searchParams.set("client_id", clientId ?? "");
   url.searchParams.set("client_secret", clientSecret ?? "");
@@ -25,8 +26,6 @@ export const GET = async (req: Request) => {
   });
 
   const body = await request.json();
-
-  console.log(body);
 
   const session = await getSessionServer();
 
