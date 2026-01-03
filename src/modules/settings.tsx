@@ -1,6 +1,14 @@
 "use client";
+import { PlatformIcon } from "@/components/commom/platform-icon";
+import { Platform } from "@/components/commom/platform.settings";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,14 +18,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { AnthropicIcon } from "@/icons";
+import { integrationService } from "@/services/integrations";
 import { settingsService } from "@/services/settings";
 import { InputUpdateSetting } from "@/services/settings/contracts";
 import { getSession } from "@/utils/get-session";
 import { deleteCookie } from "cookies-next";
+import { Github } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import colors from "tailwindcss/colors";
 
 export function SettingsModule() {
@@ -25,9 +37,7 @@ export function SettingsModule() {
   const { push } = useRouter();
 
   const sessionId = session?.id;
-  const { data, mutate } = useSWR("settiings", () =>
-    settingsService.get(sessionId!)
-  );
+  const { data } = useSWR("settiings", () => settingsService.get(sessionId!));
 
   const models = [
     "claude-sonnet-4-5",
@@ -46,9 +56,14 @@ export function SettingsModule() {
 
     if (result.success) {
       toast.success("Configurações salvas com sucesso!");
-      mutate();
+      mutate("settings");
     }
   };
+
+  const { data: platformsData } = useSWR("platforms", () =>
+    integrationService.getPlatforms(sessionId!)
+  );
+  const platforms = platformsData?.data;
 
   return (
     <Card className="flex-1 h-full border  p-2 shadow-none overflow-hidden gap-0 rounded-r-xl">
@@ -80,11 +95,12 @@ export function SettingsModule() {
           id="models"
           className="flex items-start justify-start p-4 flex-col "
         >
-          <h1 className="text-gray-800 font-medium text-lg">Modelo</h1>
-          <span className="text-gray-500 text-sm">
+          <h1 className="text-foreground font-medium text-lg">Modelo</h1>
+          <span className="text-muted-foreground text-sm">
             Selecione o modelo desejado, ou se preferir, coloque a sua chave de
             API.
           </span>
+
           <Card className="w-full flex-row rounded-xl p-2 gap-2 mt-2 relative">
             <div className="w-full flex flex-col">
               <Select
@@ -125,6 +141,19 @@ export function SettingsModule() {
               Agora você está usando sua chave de API.
             </span>
           )}
+        </section>
+        <section
+          id="integrations"
+          className="flex items-start justify-start p-4 flex-col "
+        >
+          <h1 className="text-foreground font-medium text-lg">Integrações</h1>
+          <span className="text-muted-foreground text-sm">
+            Integre plataformas de sua escolha para uma melhor experiência.
+          </span>
+
+          {platforms?.map((platform, index) => (
+            <Platform key={index} {...platform} />
+          ))}
         </section>
       </CardContent>
     </Card>
