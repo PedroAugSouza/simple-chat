@@ -4,7 +4,7 @@ export const agentsService = {
   generateTitle: async ({
     message,
   }: InputGenerateChatTitle): Promise<string> => {
-    const request = await fetch("/api/agent", {
+    const request = await fetch("/ai/agents/generate-title", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

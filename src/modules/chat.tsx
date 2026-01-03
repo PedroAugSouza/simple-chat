@@ -67,7 +67,7 @@ export function Chat({
     id,
     messages: initialMessages,
     transport: new DefaultChatTransport({
-      api: `/api/chat/${id}`,
+      api: `/ai/chat/${id}`,
     }),
     onFinish: async ({ message }) => {
       const lastPart = message.parts[message.parts.length - 1];

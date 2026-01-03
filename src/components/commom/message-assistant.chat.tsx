@@ -45,7 +45,15 @@ export const MessageAssistant = (
   const isThinking = message.isLastMessage && message.status === "streaming";
 
   return (
-    <div className="group transition-all mt-4">
+    <motion.div
+      key={message.id}
+      className="group transition-all mt-4"
+      layout="position"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <div key={message.id} className=" gap-2 flex justify-start">
         <div
           className={cn(
@@ -126,6 +134,6 @@ export const MessageAssistant = (
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
