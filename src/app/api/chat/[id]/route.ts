@@ -24,8 +24,9 @@ export async function GET(
         id: chat.id,
         name: chat.name,
         messages: [
-          ...chat.messages.map((message) => ({
+          ...chat.messages.map(({ metadata, ...message }) => ({
             parts: JSON.parse(message.text),
+            ...(metadata && { metadata: JSON.parse(metadata) }),
             ...message,
           })),
         ],

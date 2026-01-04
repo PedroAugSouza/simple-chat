@@ -1,17 +1,18 @@
 "use client";
 
-import { UIMessage } from "ai";
 import { motion } from "motion/react";
-import { Markdown } from "./markdown";
+
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SimplIcon } from "@/icons";
 import { format } from "date-fns";
+import { MyUIMessage } from "@/types";
+import { Markdown } from "./markdown";
 
 export const MessageAssistant = (
-  message: UIMessage & { status: string; isLastMessage: boolean }
+  message: MyUIMessage & { status: string; isLastMessage: boolean }
 ) => {
   const [copied, setCopied] = useState(false);
 
@@ -71,7 +72,9 @@ export const MessageAssistant = (
           <div className="items-center flex flex-row gap-1 text-xs font-mono">
             <span>Simpl</span>
             <span className="size-1 bg-black" />
-            <span>{format(new Date(), "HH:mm")}</span>
+            <span>
+              {format(message.metadata?.createdAt ?? new Date(), "HH:mm")}
+            </span>
           </div>
           <div className="h-full w-full max-w-5xl">
             {message.parts.filter((p) => p.type === "reasoning").length > 0 && (

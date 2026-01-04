@@ -6,8 +6,10 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
   stepCountIs,
+  smoothStream,
 } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createMistral, mistral } from "@ai-sdk/mistral";
 import { prisma } from "@/lib/prisma";
 import { ENV } from "@/config/env";
 import { cookies } from "next/headers";
@@ -15,12 +17,13 @@ import { jwtDecode } from "jwt-decode";
 import { weather } from "@/ai/tools/weather";
 import { github } from "@/ai/tools/github";
 import { integrationTool } from "@/ai/tools/integration";
+import { MyUIMessage } from "@/types";
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const { messages }: { messages: MyUIMessage[] } = await req.json();
 
   const chatId = (await params).id;
   const storage = await cookies();
@@ -35,16 +38,23 @@ export async function POST(
     },
   });
 
-  const apiKey = settings?.apiKey
-    ? settings?.apiKey === ""
-      ? ENV.ANTHROPIC_API_KEY
-      : settings?.apiKey
-    : ENV.ANTHROPIC_API_KEY;
+  // const apiKey = settings?.apiKey
+  //   ? settings?.apiKey === ""
+  //     ? ENV.ANTHROPIC_API_KEY
+  //     : settings?.apiKey
+  //   : ENV.ANTHROPIC_API_KEY;
 
-  const anthropic = createAnthropic({ apiKey });
+  // const anthropic = createAnthropic({ apiKey });
+
+  // const mid = wrapLanguageModel({
+  //   model: anthropic(settings?.model ?? "claude-3-7-sonnet-latest"),
+  //   middleware: extractReasoningMiddleware({
+  //     tagName: "think",
+  //   }),
+  // });
 
   const mid = wrapLanguageModel({
-    model: anthropic(settings?.model ?? "claude-3-7-sonnet-latest"),
+    model: mistral("magistral-small-2506"),
     middleware: extractReasoningMiddleware({
       tagName: "think",
     }),
@@ -53,31 +63,31 @@ export async function POST(
   const result = streamText({
     model: mid,
     messages: await convertToModelMessages(messages),
-    temperature: 0.3,
-    maxOutputTokens: 512,
+    temperature: 0.7,
+    maxOutputTokens: 2048,
     maxRetries: 2,
     tools: {
       weather,
       integrationTool,
       github,
     },
+    experimental_transform: smoothStream({
+      chunking: "line",
+      delayInMs: 20,
+    }),
     stopWhen: stepCountIs(10),
-    onStepFinish: async (step) => {
-      console.log(step);
-    },
-
     system: `
       responda em português.
 
       se o usuário solicitar alguma integração, procure as credenciais antes de qualquer outra tool.
 
       - quando usar alguma tool ou efetuar alguma pesquisa, retorne o pensamento dentro de tag "<think></think>", por exemplo:
+
+      - não retorne algum tipo de credencial em <think></think>
       
       <think>chamando a tool X</think>
       
       <think>Verificando essas informações para você.</think>
-      
-      <think>Busquei em uma api externa informações sobre...</think>
       
       - não responda coisas antes do resultado da busca que não seja pensamento.
 
@@ -86,6 +96,14 @@ export async function POST(
 
   return result.toUIMessageStreamResponse({
     originalMessages: messages,
+    sendReasoning: true,
+    messageMetadata: ({ part }) => {
+      if (part.type === "start") {
+        return {
+          createdAt: new Date(),
+        };
+      }
+    },
     onFinish: async ({ messages }) => {
       await prisma.chat.update({
         where: { id: chatId },
@@ -96,6 +114,7 @@ export async function POST(
               data: messages.map((message) => ({
                 role: message.role,
                 text: JSON.stringify(message.parts),
+                metadata: JSON.stringify(message.metadata),
                 id: message.id.trim().length === 0 ? generateId() : message.id,
               })),
             },

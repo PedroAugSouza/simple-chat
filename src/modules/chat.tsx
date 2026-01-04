@@ -1,30 +1,15 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { UIMessage, useChat } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { ChevronDown, Copy, RefreshCcw, Send } from "lucide-react";
+import { ChevronDown, Send } from "lucide-react";
 
-import { Markdown } from "@/components/commom/markdown";
-import {
-  Fragment,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { AnimatePresence, motion } from "motion/react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { useLayoutEffect, useRef } from "react";
+import { AnimatePresence } from "motion/react";
 import { DefaultChatTransport } from "ai";
 import { Separator } from "@/components/ui/separator";
 import { agentsService } from "@/services/agents";
@@ -37,23 +22,22 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { MyUIMessage } from "@/types";
 
 const chatSchema = z.object({
   userMessage: z.string().nonempty(),
 });
 
 type Form = z.infer<typeof chatSchema>;
-interface MessageWithReasoning extends UIMessage {
-  reasoning?: string;
-}
+
 export function Chat({
   id,
   initialMessages,
   name,
 }: {
   id?: string | undefined;
-  initialMessages?: UIMessage[];
+  initialMessages?: MyUIMessage[];
   name: string;
 }) {
   const pathname = usePathname();
@@ -63,7 +47,7 @@ export function Chat({
 
   const titleRef = useRef<HTMLButtonElement>(null);
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status } = useChat<MyUIMessage>({
     id,
     messages: initialMessages,
     transport: new DefaultChatTransport({
@@ -160,6 +144,9 @@ export function Chat({
         onSubmit={handleSubmit((data) => {
           sendMessage({
             text: data.userMessage,
+            metadata: {
+              createdAt: new Date(),
+            },
           });
           reset();
         })}

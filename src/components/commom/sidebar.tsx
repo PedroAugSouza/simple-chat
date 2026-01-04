@@ -5,12 +5,20 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { Plus, EllipsisVertical, Cog, ArrowLeft } from "lucide-react";
+import {
+  Plus,
+  EllipsisVertical,
+  Cog,
+  ArrowLeft,
+  Newspaper,
+} from "lucide-react";
 import useSWR, { mutate } from "swr";
 import { usePathname, useRouter } from "next/navigation";
 import { getSession } from "@/utils/get-session";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
+import { Badge } from "../ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export const Sidebar = () => {
   const pathname = usePathname();
@@ -40,54 +48,61 @@ export const Sidebar = () => {
           <p className="text-2xl font-bold tracking-tighter flex items-center gap-1 px-2 my-1">
             Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
           </p>
-          <Separator />
+          <Separator className="mb-2" />
+          <button
+            className="flex items-center justify-start gap-2 py-1 px-4 hover:bg-gray-100 cursor-pointer rounded-md text-sm mt-1 disabled:cursor-not-allowed "
+            disabled
+          >
+            <Newspaper size={16} />
+            <span>Feed</span>
+            <Badge className="ml-auto">em breve</Badge>
+          </button>
           <button
             onClick={handleCreateChat}
-            className="flex items-center justify-start gap-2 py-2 px-4 hover:bg-gray-100 cursor-pointer rounded-md text-sm mt-1"
+            className="flex items-center justify-start gap-2 py-1 px-4 hover:bg-gray-100 cursor-pointer rounded-md text-sm mt-1"
           >
             <Plus size={16} />
             <span>Criar chat</span>
           </button>
 
-          <ul className="flex flex-col w-full flex-1">
+          <ul className="flex flex-col w-full flex-1 mt-2">
             {chats?.map((chat) => (
-              <li
-                key={chat.id}
-                className="flex flex-row justify-between group hover:bg-gray-100 rounded py-1 px-2 group"
-              >
-                <Link
-                  href={`/chat/${chat.id}`}
-                  className="cursor-pointer rounded-l-md w-full pl-2 text-foreground truncate"
-                  title={chat.name}
-                >
-                  {chat.name}
-                </Link>
-
-                <Popover>
-                  <PopoverTrigger className="text-zinc-600 cursor-pointer group-hover:opacity-100 opacity-0">
-                    <EllipsisVertical size={18} />
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="p-2 rounded-none w-28 bg-background/80 backdrop-blur-[2px] flex flex-col"
-                    side="right"
+              <Tooltip key={chat.id} delayDuration={3000}>
+                <TooltipTrigger className="flex flex-row justify-between group hover:bg-gray-100 rounded py-1 px-2 group w-full">
+                  <Link
+                    href={`/chat/${chat.id}`}
+                    className="cursor-pointer rounded-l-md w-full pl-2 text-foreground text-start truncate"
                   >
-                    <button
-                      className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
-                      onClick={() => {
-                        chatService.delete(chat.id).then(() => {
-                          const chatId = pathname?.split("/")[2];
-                          if (chatId === chat.id) {
-                            push("/chat");
-                          }
-                          mutate("get-chats");
-                        });
-                      }}
+                    {chat.name}
+                  </Link>
+
+                  <Popover>
+                    <PopoverTrigger className="text-zinc-600 cursor-pointer group-hover:opacity-100 opacity-0">
+                      <EllipsisVertical size={18} />
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="p-2 rounded-none w-28 bg-background/80 backdrop-blur-[2px] flex flex-col"
+                      side="right"
                     >
-                      Exluir
-                    </button>
-                  </PopoverContent>
-                </Popover>
-              </li>
+                      <button
+                        className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
+                        onClick={() => {
+                          chatService.delete(chat.id).then(() => {
+                            const chatId = pathname?.split("/")[2];
+                            if (chatId === chat.id) {
+                              push("/chat");
+                            }
+                            mutate("get-chats");
+                          });
+                        }}
+                      >
+                        Exluir
+                      </button>
+                    </PopoverContent>
+                  </Popover>
+                </TooltipTrigger>
+                <TooltipContent side="right">{chat.name}</TooltipContent>
+              </Tooltip>
             ))}
           </ul>
           <Link

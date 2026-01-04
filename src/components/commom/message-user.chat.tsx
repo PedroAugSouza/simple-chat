@@ -1,10 +1,11 @@
 import { format } from "date-fns";
-import { UIMessage } from "ai";
+
 import { Markdown } from "./markdown";
 import { User } from "lucide-react";
 import { motion } from "motion/react";
+import { MyUIMessage } from "@/types";
 
-export const MessageUser = ({ id, role, parts }: UIMessage) => {
+export const MessageUser = ({ id, role, parts, ...message }: MyUIMessage) => {
   return (
     <motion.div
       key={id}
@@ -19,7 +20,9 @@ export const MessageUser = ({ id, role, parts }: UIMessage) => {
         <div className="items-center flex flex-row gap-1 text-xs font-mono">
           <span>Você</span>
           <span className="size-1 bg-black" />
-          <span>{format(new Date(), "HH:mm")}</span>
+          <span>
+            {format(message.metadata?.createdAt ?? new Date(), "HH:mm")}
+          </span>
         </div>
         <div className="py-2 px-3 bg-gray-200 rounded-lg font-sans rounded-tr-none">
           {parts.map((part, i) => {

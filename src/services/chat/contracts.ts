@@ -1,3 +1,4 @@
+import { MyUIMessage } from "@/types";
 import { UIMessage } from "@ai-sdk/react";
 
 export interface InputUpdateChat {
@@ -11,7 +12,7 @@ export interface InputSaveChat {
 export interface OutputDataLoadChat {
   id: string;
   name: string;
-  messages: UIMessage[];
+  messages: MyUIMessage[];
 }
 
 export interface OutputGetChats {
