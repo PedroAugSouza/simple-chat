@@ -1,11 +1,17 @@
 "use client";
 import PixelBlast from "@/components/PixelBlast";
+import { motion } from "motion/react";
 import { ReactNode } from "react";
 
 export default ({ children }: { children: ReactNode }) => {
   return (
     <main className="h-screen w-screen grid place-items-center relative">
-      <div style={{ width: "100%", height: "100%", position: "absolute" }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="size-full absolute"
+      >
         <PixelBlast
           variant="square"
           pixelSize={3}
@@ -21,7 +27,7 @@ export default ({ children }: { children: ReactNode }) => {
           rippleIntensityScale={1.5}
           transparent
         />
-      </div>
+      </motion.div>
       <div className="z-10">{children}</div>
     </main>
   );

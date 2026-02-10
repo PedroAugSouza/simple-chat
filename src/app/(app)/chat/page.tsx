@@ -22,10 +22,11 @@ export default function Chat() {
   };
 
   return (
-    <Card className="w-full h-full border p-0 shadow-none overflow-hidden gap-0 rounded-r-xl flex flex-col items-center justify-center text-gray-800">
+    <Card className="flex-1 border p-0 shadow-none overflow-hidden gap-0 rounded-r-xl flex flex-col items-center justify-center text-gray-800 bg-transparent">
       <span>
-        <Sparkles size={44} strokeWidth={1.5} />
+        <Sparkles size={44} strokeWidth={1} />
       </span>
+
       <button
         onClick={handleCreateChat}
         className="border border-gray-500 rounded-full text-lg font-medium py-2 px-3 mt-6 cursor-pointer"

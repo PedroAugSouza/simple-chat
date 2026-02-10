@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Source_Serif_4, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SWRProvider } from "@/providers/swr.providers";
 
-const geistSans = Geist({
+const sourceSerif = Source_Serif_4({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const geistMono = Geist_Mono({
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-primary selection:text-primary-foreground`}
+        className={`${sourceSerif.variable} ${sourceSerif.className} ${geistMono.variable} antialiased selection:bg-primary selection:text-primary-foreground bg-amber-50/50`}
       >
         <SWRProvider>
           {children}

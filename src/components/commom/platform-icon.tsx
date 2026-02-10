@@ -1,4 +1,5 @@
 import { Github } from "lucide-react";
+import { SiGoogleanalytics } from "react-icons/si";
 
 interface Props {
   name: string;
@@ -9,6 +10,7 @@ interface Props {
 export const PlatformIcon = ({ name, className, size = 22 }: Props) => {
   const icons = {
     github: <Github className={className} size={size} />,
+    "google-analytics": <SiGoogleanalytics className={className} size={size} />,
   };
 
   return icons[name as keyof typeof icons];

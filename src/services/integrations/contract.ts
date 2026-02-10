@@ -4,7 +4,6 @@ export interface OutputGetPlatforms {
   authorized: boolean;
   description: string;
   icon: string;
-
   integrationId?: string;
   active?: boolean;
   credentials?: string;

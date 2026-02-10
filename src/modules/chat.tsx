@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, Send } from "lucide-react";
 
 import { useLayoutEffect, useRef } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { DefaultChatTransport } from "ai";
 import { Separator } from "@/components/ui/separator";
 import { agentsService } from "@/services/agents";
@@ -24,6 +24,10 @@ import {
 } from "@/components/ui/popover";
 import { usePathname, useRouter } from "next/navigation";
 import { MyUIMessage } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { MindIcon } from "@/icons";
+import { format } from "date-fns";
 
 const chatSchema = z.object({
   userMessage: z.string().nonempty(),
@@ -53,6 +57,7 @@ export function Chat({
     transport: new DefaultChatTransport({
       api: `/ai/chat/${id}`,
     }),
+    experimental_throttle: 100,
     onFinish: async ({ message }) => {
       const lastPart = message.parts[message.parts.length - 1];
       if (lastPart?.type !== "text") return;
@@ -78,7 +83,6 @@ export function Chat({
       behavior: "smooth",
     });
   };
-
   const lastMessage = messages[messages.length - 1];
 
   useLayoutEffect(() => {
@@ -86,8 +90,8 @@ export function Chat({
   }, [messages, status]);
 
   return (
-    <Card className=" flex-1 border p-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between ">
-      <header className="w-full  px-4 bg-gray-50 text-gray-800 font-medium mb-1 grid place-items-center">
+    <Card className=" flex-1 border py-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between bg-transparent ">
+      <header className="w-full  px-4 text-gray-800 font-medium mb-1 grid place-items-center">
         <Popover>
           <PopoverTrigger
             ref={titleRef}
@@ -120,27 +124,48 @@ export function Chat({
       </header>
       <Separator />
 
-      <section className=" h-full pt-4 3xl:px-62 xl:px-28 lg:px-20 md:px-8 px-2 overflow-auto w-full">
-        <AnimatePresence>
-          {messages.map((m) => {
-            return m.role === "assistant" ? (
-              <MessageAssistant
-                {...m}
-                isLastMessage={lastMessage.id === m.id}
-                status={status}
-                key={m.id}
-              />
-            ) : (
-              <MessageUser {...m} key={m.id} />
-            );
-          })}
-        </AnimatePresence>
+      <section className=" h-full pt-4 md:px-8 px-2 overflow-auto w-full flex justify-center items-start">
+        <div className="w-full max-w-5xl">
+          <AnimatePresence>
+            {messages.map((m, index, messages) => {
+              return m.role === "assistant" ? (
+                <MessageAssistant
+                  {...m}
+                  isLastMessage={lastMessage.id === m.id}
+                  status={status}
+                  key={m.id}
+                  messages={messages}
+                />
+              ) : (
+                <MessageUser {...m} key={m.id} />
+              );
+            })}
+            {status === "submitted" && (
+              <div className="group transition-all mt-4">
+                <div className=" gap-2 flex justify-start">
+                  <MindIcon className="rounded relative z-10" />
+                  <div>
+                    <div className="items-center flex flex-row gap-1 text-xs font-mono">
+                      <span>OrbMind</span>
+                      <span className="size-1 bg-black" />
+                      <span>{format(new Date(), "HH:mm")}</span>
+                    </div>
+                    <div className="h-full w-full max-w-5xl text-sm ">
+                      <Shimmer duration={1}>Pensando...</Shimmer>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              // <Shimmer duration={1}> Carregando...</Shimmer>
+            )}
+          </AnimatePresence>
 
-        <div key="end-anchor" ref={endRef} className="h-4 shrink-0" />
+          <div key="end-anchor" ref={endRef} className="h-4 shrink-0" />
+        </div>
       </section>
 
       <form
-        className="w-full py-2  3xl:px-62 xl:px-28 lg:px-20 md:px-8 px-2  flex gap-2"
+        className="w-full py-2  flex items-center justify-center gap-2"
         onSubmit={handleSubmit((data) => {
           sendMessage({
             text: data.userMessage,
@@ -151,7 +176,7 @@ export function Chat({
           reset();
         })}
       >
-        <div className="w-full flex gap-2 border border-gray-300 rounded-full overflow-hidden h-10">
+        <div className="w-full max-w-5xl flex gap-2 border border-gray-300 rounded-full overflow-hidden h-10">
           <input
             placeholder="Enviar mensagem..."
             disabled={status === "streaming"}

@@ -24,7 +24,7 @@ export const MessageUser = ({ id, role, parts, ...message }: MyUIMessage) => {
             {format(message.metadata?.createdAt ?? new Date(), "HH:mm")}
           </span>
         </div>
-        <div className="py-2 px-3 bg-gray-200 rounded-lg font-sans rounded-tr-none">
+        <div className="py-1 px-2 bg-white border shadow-md rounded-lg font-sans rounded-tr-none">
           {parts.map((part, i) => {
             switch (part.type) {
               case "text":
@@ -33,7 +33,7 @@ export const MessageUser = ({ id, role, parts, ...message }: MyUIMessage) => {
           })}
         </div>
       </div>
-      <div className="border size-8 ml-2 grid place-items-center border-gray-300 rounded">
+      <div className="border size-8 ml-2 grid place-items-center shadow-md bg-white rounded">
         <User size={18} />
       </div>
     </motion.div>

@@ -1,4 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText, UIMessage } from "ai";
 import { NextResponse } from "next/server";
 
@@ -6,8 +7,13 @@ import { NextResponse } from "next/server";
 export const POST = async (req: Request) => {
   const { message }: { message: string } = await req.json();
 
+  const openrouter = createOpenRouter({
+    apiKey:
+      "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",
+  });
+
   const result = await generateText({
-    model: anthropic("claude-3-7-sonnet-latest"),
+    model: openrouter("z-ai/glm-4.5-air:free"),
     system: `
     Você é um escritor profissional.
     Você escreve de forma clara, simples, o objetiva e consistente;
@@ -18,7 +24,7 @@ export const POST = async (req: Request) => {
    `.trim(),
     prompt:
       `Gere um título para esta conversa bseada nesta resposta(se faltar informação, gere um resumo): ${JSON.stringify(
-        message
+        message,
       )}`.trim(),
   });
 

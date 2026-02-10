@@ -142,10 +142,11 @@ export function SettingsModule() {
           <span className="text-muted-foreground text-sm">
             Integre plataformas de sua escolha para uma melhor experiência.
           </span>
-
-          {platforms?.map((platform, index) => (
-            <Platform key={index} {...platform} />
-          ))}
+          <div className="flex flex-wrap gap-2">
+            {platforms?.map((platform, index) => (
+              <Platform key={index} {...platform} />
+            ))}
+          </div>
         </section>
       </CardContent>
     </Card>

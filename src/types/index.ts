@@ -8,3 +8,9 @@ export const messageMetadataSchema = z.object({
 export type MessageMetadata = z.infer<typeof messageMetadataSchema>;
 
 export type MyUIMessage = UIMessage<MessageMetadata>;
+export interface GaReportResponse {
+  rows?: Array<{
+    dimensionValues?: Array<{ value?: string }>
+    metricValues?: Array<{ value?: string }>
+  }>
+}

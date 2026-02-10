@@ -1,27 +1,21 @@
 import {
   streamText,
-  UIMessage,
   convertToModelMessages,
-  generateId,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
   stepCountIs,
   smoothStream,
 } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createMistral, mistral } from "@ai-sdk/mistral";
+
 import { prisma } from "@/lib/prisma";
-import { ENV } from "@/config/env";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 import { weather } from "@/ai/tools/weather";
-import { github } from "@/ai/tools/github";
-import { integrationTool } from "@/ai/tools/integration";
 import { MyUIMessage } from "@/types";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { SYSTEM_PROMPT } from "@/ai/prompts/chat";
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { messages }: { messages: MyUIMessage[] } = await req.json();
 
@@ -38,89 +32,54 @@ export async function POST(
     },
   });
 
-  // const apiKey = settings?.apiKey
-  //   ? settings?.apiKey === ""
-  //     ? ENV.ANTHROPIC_API_KEY
-  //     : settings?.apiKey
-  //   : ENV.ANTHROPIC_API_KEY;
-
-  // const anthropic = createAnthropic({ apiKey });
-
-  // const mid = wrapLanguageModel({
-  //   model: anthropic(settings?.model ?? "claude-3-7-sonnet-latest"),
-  //   middleware: extractReasoningMiddleware({
-  //     tagName: "think",
-  //   }),
-  // });
-
-  const mid = wrapLanguageModel({
-    model: mistral("magistral-small-2506"),
-    middleware: extractReasoningMiddleware({
-      tagName: "think",
-    }),
+  const openrouter = createOpenRouter({
+    apiKey:
+      "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",
   });
 
   const result = streamText({
-    model: mid,
+    model: openrouter("z-ai/glm-4.5-air:free"),
     messages: await convertToModelMessages(messages),
-    temperature: 0.7,
-    maxOutputTokens: 2048,
-    maxRetries: 2,
+    maxRetries: 10,
     tools: {
       weather,
-      integrationTool,
-      github,
     },
     experimental_transform: smoothStream({
-      chunking: "line",
-      delayInMs: 20,
+      chunking: "word",
     }),
     stopWhen: stepCountIs(10),
-    system: `
-      responda em português.
+    system: SYSTEM_PROMPT.trim(),
 
-      se o usuário solicitar alguma integração, procure as credenciais antes de qualquer outra tool.
+    onFinish: async ({ response }) => {
+      const assistantMessage = response.messages[response.messages.length - 1];
 
-      - quando usar alguma tool ou efetuar alguma pesquisa, retorne o pensamento dentro de tag "<think></think>", por exemplo:
+      const userMessage = messages[messages.length - 1];
 
-      - não retorne algum tipo de credencial em <think></think>
-      
-      <think>chamando a tool X</think>
-      
-      <think>Verificando essas informações para você.</think>
-      
-      - não responda coisas antes do resultado da busca que não seja pensamento.
-
-      `.trim(),
-  });
-
-  return result.toUIMessageStreamResponse({
-    originalMessages: messages,
-    sendReasoning: true,
-    messageMetadata: ({ part }) => {
-      if (part.type === "start") {
-        return {
-          createdAt: new Date(),
-        };
-      }
-    },
-    onFinish: async ({ messages }) => {
       await prisma.chat.update({
         where: { id: chatId },
         data: {
           messages: {
             createMany: {
-              skipDuplicates: true,
-              data: messages.map((message) => ({
-                role: message.role,
-                text: JSON.stringify(message.parts),
-                metadata: JSON.stringify(message.metadata),
-                id: message.id.trim().length === 0 ? generateId() : message.id,
-              })),
+              data: [
+                {
+                  text: JSON.stringify(userMessage.parts),
+                  role: userMessage.role,
+                  metadata: JSON.stringify(userMessage.metadata ?? {}),
+                },
+                {
+                  text: JSON.stringify(assistantMessage.content),
+                  role: assistantMessage.role,
+                  metadata: JSON.stringify({ createdAt: new Date() }),
+                },
+              ],
             },
           },
         },
       });
     },
+  });
+
+  return result.toUIMessageStreamResponse({
+    sendReasoning: true,
   });
 }

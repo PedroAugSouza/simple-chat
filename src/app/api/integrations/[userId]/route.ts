@@ -12,6 +12,15 @@ mapIntegrations.set("github", {
   icon: "github",
 });
 
+mapIntegrations.set("ga", {
+  name: "Google Analytics",
+  oauthLink: "/api/oauth/start/ga",
+  authorized: false,
+  description:
+    "Conecte seu Google Analytics para obter métricas de seu ecommerce.",
+  icon: "google-analytics",
+});
+
 export const GET = async (
   req: Request,
   { params }: { params: Promise<{ userId: string }> }

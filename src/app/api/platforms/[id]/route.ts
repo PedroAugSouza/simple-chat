@@ -21,15 +21,27 @@ export const PATCH = async (
 
     const body: InputUpdateIntegration = await req.json();
 
-    await prisma.integration.update({
+    const getIntegration = await prisma.integration.findFirst({
       where: {
         id,
       },
-      data: {
-        active: body.active,
-        credentials: body.credentials,
-      },
     });
+
+    const alreadyCredentials = JSON.parse(getIntegration?.credentials ?? "");
+
+    if (!getIntegration)
+      await prisma.integration.update({
+        where: {
+          id,
+        },
+        data: {
+          active: body.active,
+          credentials: JSON.stringify({
+            ...alreadyCredentials,
+            ...(body.credentials && { ...JSON.parse(body.credentials) }),
+          }),
+        },
+      });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.log(error);

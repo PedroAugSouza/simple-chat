@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const userId = (await params).userId;
@@ -11,6 +11,9 @@ export async function GET(
     const chats = await prisma.chat.findMany({
       where: {
         userId,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
