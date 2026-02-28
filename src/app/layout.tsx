@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SWRProvider } from "@/providers/swr.providers";
 
 const sourceSerif = Source_Serif_4({
-  variable: "--font-geist-sans",
+  variable: "--font-serif",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
 });
@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SimplAi",
+  title: "OrbMind",
   description:
-    "Uma experiência de chat de IA sem ruídos. Personalidades distintas, integrações poderosas e um foco monocromático no que importa: seu conteúdo.",
+    "Seu espaço de estudo com IA. Centralize materiais, estude com inteligência e domine seu acervo.",
 };
 
 export default function RootLayout({
@@ -27,9 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
-        className={`${sourceSerif.variable} ${sourceSerif.className} ${geistMono.variable} antialiased selection:bg-primary selection:text-primary-foreground bg-amber-50/50`}
+        className={`${sourceSerif.variable} ${sourceSerif.className} ${geistMono.variable} antialiased selection:bg-primary selection:text-primary-foreground `}
       >
         <SWRProvider>
           {children}

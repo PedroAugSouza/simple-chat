@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -9,6 +9,8 @@ import { userService } from "@/services/user";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
 import z from "zod";
 
 const registerSchema = z.object({
@@ -20,22 +22,31 @@ const registerSchema = z.object({
 type Form = z.infer<typeof registerSchema>;
 
 export function RegisterModule() {
-  const { register, handleSubmit } = useForm<Form>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Form>({
+    resolver: zodResolver(registerSchema),
+  });
   const { push } = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const registerUser = async (data: Form) => {
-    const response = await userService.register(data);
-    if (response.success) {
-      push("/chat");
-    }
+  const registerUser = (data: Form) => {
+    startTransition(async () => {
+      const response = await userService.register(data);
+      if (response.success) {
+        push("/chat");
+      }
+    });
   };
 
   return (
-    <main className="h-screen grid place-items-center">
-      <Card className="p-6 rounded-xl w-md  gap-0">
-        <h1 className="text-foreground font-semibold text-2xl">Simple Chat</h1>
-        <CardDescription className="font-normal">
-          Seu chat de IA com personalidade de forma simples.
+    <main className="h-screen grid place-items-center bg-zinc-50">
+      <Card className="p-6 rounded-xl w-md gap-0 bg-white border-zinc-300">
+        <img src="/logo.svg" alt="OrbMind" className="h-8 w-auto" />
+        <CardDescription className="font-normal mt-1">
+          Crie sua conta e comece a estudar.
         </CardDescription>
         <form
           className="flex flex-col gap-4 w-full items-start justify-start mt-8"
@@ -44,6 +55,9 @@ export function RegisterModule() {
           <div className="flex flex-col w-full gap-2 text-foreground">
             <Label>Nome</Label>
             <Input placeholder="Insira seu nome." {...register("name")} />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name.message}</p>
+            )}
           </div>
           <div className="flex flex-col w-full gap-2 text-foreground">
             <Label>Email</Label>
@@ -53,6 +67,9 @@ export function RegisterModule() {
               {...register("email")}
               type="email"
             />
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div className="flex flex-col w-full gap-2 text-foreground">
             <Label>Senha</Label>
@@ -62,9 +79,12 @@ export function RegisterModule() {
               autoComplete="off"
               type="password"
             />
+            {errors.password && (
+              <p className="text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
-          <Button className="w-full" type="submit">
-            Cadastrar
+          <Button className="w-full bg-zinc-900 hover:bg-zinc-800 text-white" type="submit" disabled={isPending}>
+            {isPending ? "Cadastrando..." : "Cadastrar"}
           </Button>
         </form>
         <Separator className="mt-4" />

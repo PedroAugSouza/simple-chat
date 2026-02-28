@@ -1,91 +1,55 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import {
-  GitPullRequest,
-  CheckCircle2,
-  Terminal,
-  User,
-  Sparkles,
+  Upload,
+  Search,
+  Brain,
+  GraduationCap,
+  FileText,
+  BookOpen,
   Menu,
   X,
   ArrowRight,
-  Code2,
-  Github,
-  Layout,
-  MessageSquare,
-  PenTool,
-  Zap,
-  Globe,
+  User,
+  Sparkles,
+  MessageCircle,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const BackgroundGrid: React.FC = () => {
   return (
-    <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px 16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent 100%)]">
-      <div className="absolute inset-0 border-b border-neutral-200/50"></div>
+    <div className="absolute inset-0 -z-10 h-full w-full bg-zinc-50 bg-[radial-gradient(#d6d3d1_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_60%,transparent_100%)]">
+      <div className="absolute inset-0 border-b border-zinc-200/50"></div>
     </div>
   );
 };
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "outline" | "ghost";
-  children: React.ReactNode;
-  className?: string;
-}
-
-const Button: React.FC<ButtonProps> = ({
-  variant = "primary",
-  children,
-  className = "",
-  ...props
-}) => {
-  const baseStyles =
-    "px-6 py-3 font-mono text-sm font-medium transition-all duration-200 ease-out flex items-center justify-center gap-2 active:scale-95";
-
-  const variants = {
-    primary:
-      "bg-black text-white border border-black hover:bg-neutral-800 hover:shadow-lg",
-    outline:
-      "bg-transparent text-black border border-black hover:bg-black hover:text-white",
-    ghost:
-      "bg-transparent text-black hover:bg-neutral-100 border border-transparent",
-  };
-
-  return (
-    <button
-      className={`${baseStyles} ${variants[variant]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
-
-const ChatInterface: React.FC = () => {
+const ChatDemo: React.FC = () => {
   const [step, setStep] = useState(0);
   const [typedText, setTypedText] = useState("");
-  const targetText = "Sim, merge e excluir branch.";
+
+  const aiResponse =
+    'O empirismo, representado por Locke e Hume, defende que o conhecimento se origina da experiencia sensivel \u2014 a mente e uma "tabula rasa". Ja o racionalismo, com Descartes e Leibniz, sustenta que existem ideias inatas e que a razao e a fonte primaria do conhecimento. [Fonte: Introducao a Filosofia, cap. 3]';
 
   useEffect(() => {
     const timer = setInterval(() => {
       setStep((prev) => (prev < 3 ? prev + 1 : 0));
-    }, 3500);
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    if (step === 2) {
+    if (step === 1) {
       let currentIndex = 0;
-
       const typingInterval = setInterval(() => {
-        if (currentIndex <= targetText.length) {
-          setTypedText(targetText.slice(0, currentIndex));
+        if (currentIndex <= aiResponse.length) {
+          setTypedText(aiResponse.slice(0, currentIndex));
           currentIndex++;
         } else {
           clearInterval(typingInterval);
         }
-      }, 50 + Math.random() * 20);
-
+      }, 12);
       return () => clearInterval(typingInterval);
     } else if (step === 0) {
       setTypedText("");
@@ -93,99 +57,62 @@ const ChatInterface: React.FC = () => {
   }, [step]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white border border-black rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col h-125">
-      <div className="bg-neutral-50 border-b border-black p-3 flex items-center justify-between">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full border border-black bg-white"></div>
-          <div className="w-3 h-3 rounded-full border border-black bg-black"></div>
-          <div className="w-3 h-3 rounded-full border border-black bg-neutral-400"></div>
+    <div className="w-full max-w-2xl mx-auto bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-[420px]">
+      <div className="bg-zinc-50 border-b border-zinc-200 p-3 flex items-center justify-between">
+        <div className="flex gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-zinc-300"></div>
+          <div className="w-3 h-3 rounded-full bg-zinc-300"></div>
+          <div className="w-3 h-3 rounded-full bg-zinc-300"></div>
         </div>
-        <div className="font-mono text-xs text-neutral-500 flex items-center gap-2">
-          <Globe size={12} />
-          <span>simple chat</span>
+        <div className="font-mono text-xs text-zinc-400 flex items-center gap-1.5">
+          <MessageCircle size={12} />
+          <span>OrbMind Chat</span>
         </div>
         <div className="w-10"></div>
       </div>
 
-      <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden relative">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
-          <span className="font-bold text-9xl tracking-tighter">S.</span>
-        </div>
-
-        <div className="flex gap-4 items-start animate-in slide-in-from-bottom-2 duration-500 fade-in">
-          <div className="w-8 h-8 rounded border border-black bg-white flex items-center justify-center shrink-0">
-            <User size={16} />
+      <div className="flex-1 p-5 flex flex-col gap-4 overflow-hidden">
+        <div className="flex gap-3 items-start">
+          <div className="w-7 h-7 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
+            <User size={14} className="text-zinc-500" />
           </div>
-          <div className="flex flex-col gap-1 max-w-[80%]">
-            <span className="text-xs font-mono text-neutral-500">
-              Você • 10:42
-            </span>
-            <div className="bg-neutral-100 p-3 rounded-lg border border-transparent text-sm">
-              Status da PR #42 no repositório{" "}
-              <code className="bg-white border border-neutral-300 px-1 py-0.5 rounded text-xs font-mono">
-                simple-web
-              </code>
-              ?
+          <div className="flex flex-col gap-1 max-w-[85%]">
+            <span className="text-xs text-zinc-400">Voce</span>
+            <div className="bg-zinc-50 border border-zinc-100 p-3 rounded-lg text-sm text-zinc-800 leading-relaxed">
+              Quais sao as principais diferencas entre empirismo e racionalismo
+              segundo os textos que enviei?
             </div>
           </div>
         </div>
 
         <div
-          className={`flex gap-4 items-start transition-opacity duration-500 ${
+          className={`flex gap-3 items-start transition-opacity duration-700 ${
             step >= 1 ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="w-8 h-8 rounded border border-black bg-black text-white flex items-center justify-center shrink-0">
-            <Sparkles size={16} />
+          <div className="w-7 h-7 rounded-full bg-zinc-900 flex items-center justify-center shrink-0">
+            <Sparkles size={14} className="text-white" />
           </div>
-          <div className="flex flex-col gap-1 w-full">
-            <span className="text-xs font-mono text-neutral-500">
-              Dev Persona • 10:42
-            </span>
-            <div className="border border-neutral-200 p-4 rounded-lg text-sm w-full bg-white shadow-sm">
-              <div className="flex items-center gap-2 mb-3 border-b border-neutral-100 pb-2">
-                <GitPullRequest size={16} className="text-black" />
-                <span className="font-semibold">PR #42: Feature/dark-mode</span>
-                <span className="ml-auto text-xs font-mono bg-black text-white px-2 py-0.5 rounded-full">
-                  ABERTO
+          <div className="flex flex-col gap-1 max-w-[85%]">
+            <span className="text-xs text-zinc-400">OrbMind</span>
+            <div className="border border-zinc-200 p-3 rounded-lg text-sm text-zinc-700 leading-relaxed bg-white">
+              {step >= 1 && (
+                <>
+                  <p>{typedText}</p>
+                  {typedText.length < aiResponse.length && (
+                    <span className="inline-block w-1.5 h-4 bg-zinc-400 animate-pulse ml-0.5 align-middle"></span>
+                  )}
+                </>
+              )}
+            </div>
+            {step >= 2 && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <FileText size={10} className="text-zinc-400" />
+                <span className="text-[10px] text-zinc-400 font-mono">
+                  Baseado em 3 documentos do seu acervo
                 </span>
               </div>
-
-              <div className="space-y-2 font-mono text-xs">
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 size={12} />
-                  <span>Build aprovada (2m 30s)</span>
-                </div>
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 size={12} />
-                  <span>Testes passaram (142/142)</span>
-                </div>
-                <div className="flex items-center gap-2 text-neutral-400">
-                  <div className="w-3 h-3 border border-neutral-300 rounded-full border-t-black animate-spin"></div>
-                  <span>Deploy em andamento...</span>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-neutral-100">
-                <p className="text-neutral-600">
-                  As alterações parecem sólidas. O deploy na Vercel está
-                  pendente. Devo fazer o merge assim que concluir?
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={`mt-auto transition-opacity duration-500 ${
-            step >= 2 ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="flex gap-2 items-center">
-            <div className="w-full h-10 border-b-2 border-black flex items-center px-2 font-mono text-sm">
-              {typedText}
-              <span className="w-2 h-4 bg-black animate-pulse ml-1"></span>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -197,8 +124,6 @@ const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const { push } = useRouter();
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -208,33 +133,28 @@ const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { label: "Personalidades", href: "#personalities" },
-    { label: "Integrações", href: "#integrations" },
-    { label: "Manifesto", href: "#manifesto" },
+    { label: "Recursos", href: "#recursos" },
+    { label: "Como Funciona", href: "#como-funciona" },
+    { label: "Comecar", href: "#comecar" },
   ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         scrolled
-          ? "bg-white/80 backdrop-blur-md border-neutral-200 py-3"
+          ? "bg-white/80 backdrop-blur-md border-zinc-200 py-3"
           : "bg-transparent border-transparent py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a
-          href="/login"
-          className="text-2xl font-bold tracking-tighter flex items-center gap-1"
-        >
-          Simpl<span className="w-2 h-2 bg-black rounded-full mt-2"></span>
-        </a>
+        <img src="/logo.svg" alt="OrbMind" className="h-8 w-auto" />
 
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-neutral-600 hover:text-black transition-colors"
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
             >
               {link.label}
             </a>
@@ -242,23 +162,22 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <a
+          <Link
             href="/login"
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors"
           >
             Entrar
-          </a>
-          <Button
-            onClick={() => push("/register")}
-            variant="primary"
-            className="py-2 px-5 text-xs"
+          </Link>
+          <Link
+            href="/register"
+            className="px-5 py-2 bg-zinc-900 text-white text-sm font-medium rounded-lg hover:bg-zinc-800 transition-colors"
           >
-            Obter Acesso
-          </Button>
+            Criar Conta
+          </Link>
         </div>
 
         <button
-          className="md:hidden p-2 text-black"
+          className="md:hidden p-2 text-zinc-900"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -266,291 +185,240 @@ const Header: React.FC = () => {
       </div>
 
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-black p-6 md:hidden flex flex-col gap-6 shadow-xl animate-in slide-in-from-top-5">
+        <div className="absolute top-full left-0 right-0 bg-white border-b border-zinc-200 p-6 md:hidden flex flex-col gap-4 shadow-lg">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="text-lg font-medium text-black border-b border-neutral-100 pb-2"
+              className="text-base font-medium text-zinc-700 py-2 border-b border-zinc-100"
             >
               {link.label}
             </a>
           ))}
-          <Button className="w-full justify-center">Obter Acesso</Button>
+          <Link
+            href="/register"
+            className="w-full text-center px-5 py-3 bg-zinc-900 text-white text-sm font-medium rounded-lg hover:bg-zinc-800 transition-colors mt-2"
+          >
+            Criar Conta
+          </Link>
         </div>
       )}
     </header>
   );
 };
 
-interface IntegrationCardProps {
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-}
+const features = [
+  {
+    icon: Upload,
+    title: "Upload Inteligente",
+    description:
+      "PDF, DOCX, MD, TXT. Arraste e solte seus materiais de estudo e deixe a plataforma organizar tudo.",
+  },
+  {
+    icon: Search,
+    title: "Busca Semantica (RAG)",
+    description:
+      "IA que encontra os trechos mais relevantes do seu acervo para responder com precisao e contexto.",
+  },
+  {
+    icon: Brain,
+    title: "Tutor Academico",
+    description:
+      "Resumos, explicacoes, comparacoes e mapas mentais baseados nos seus proprios documentos.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Simulados e Flashcards",
+    description:
+      "Gere questoes no formato de vestibular, concurso ou prova academica a partir do seu material.",
+  },
+];
 
-const IntegrationCard: React.FC<IntegrationCardProps> = ({
-  name,
-  description,
-  icon,
-}) => {
-  return (
-    <div className="group relative bg-white border border-neutral-200 p-6 transition-all duration-300 hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col gap-4">
-      <div className="w-12 h-12 flex items-center justify-center border border-neutral-100 bg-neutral-50 rounded-lg group-hover:bg-black group-hover:text-white group-hover:border-black transition-colors">
-        {icon}
-      </div>
-      <div>
-        <h3 className="text-lg font-bold mb-1">{name}</h3>
-        <p className="text-sm text-neutral-500 leading-relaxed">
-          {description}
-        </p>
-      </div>
-    </div>
-  );
-};
-export default function LandinPage() {
-  const { push } = useRouter();
+const steps = [
+  {
+    number: "01",
+    icon: Upload,
+    title: "Envie seus documentos",
+    description:
+      "Faca upload de PDFs, artigos, apostilas e anotacoes. Suporte para os principais formatos academicos.",
+  },
+  {
+    number: "02",
+    icon: BookOpen,
+    title: "A IA indexa tudo",
+    description:
+      "Cada documento e fragmentado e vetorizado automaticamente para busca semantica de alta precisao.",
+  },
+  {
+    number: "03",
+    icon: MessageCircle,
+    title: "Converse e aprenda",
+    description:
+      "Pergunte sobre qualquer tema do seu acervo e receba respostas fundamentadas nos seus textos.",
+  },
+];
 
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 relative overflow-x-hidden">
       <Header />
 
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6">
+      {/* Hero */}
+      <section className="relative pt-32 pb-20 lg:pt-44 lg:pb-28 px-6">
         <BackgroundGrid />
 
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
-          <div className="flex flex-col gap-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-200 bg-white/50 backdrop-blur-sm w-fit">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-xs font-mono font-medium">
-                v1.0 Acesso Antecipado
+          <div className="flex flex-col gap-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200 bg-white/70 backdrop-blur-sm w-fit">
+              <BookOpen size={14} className="text-zinc-500" />
+              <span className="text-xs font-medium text-zinc-600">
+                Plataforma de Estudo com IA
               </span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1]">
-              Simplicidade é a{" "}
-              <span className="underline decoration-4 underline-offset-4 decoration-neutral-300">
-                sofisticação
-              </span>{" "}
-              suprema.
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] font-serif">
+              Estude com inteligencia.{" "}
+              <span className="text-zinc-400">Domine seu acervo.</span>
             </h1>
 
-            <p className="text-xl text-neutral-600 max-w-lg leading-relaxed">
-              Uma experiência de chat de IA sem ruídos. Personalidades
-              distintas, integrações poderosas e um foco monocromático no que
-              importa:{" "}
-              <span className="font-mono text-black bg-neutral-100 px-1">
-                seu conteúdo
-              </span>
-              .
+            <p className="text-lg text-zinc-500 max-w-lg leading-relaxed">
+              Seu espaço onde você centraliza materiais, estuda com IA e domina
+              seu acervo. Em breve: acompanhe provas, prazos e entregas em um
+              só lugar.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <Button
-                onClick={() => push("/login")}
-                className="h-12 px-8 text-base"
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white font-medium rounded-lg hover:bg-zinc-800 transition-colors"
               >
-                Começar a Conversar <ArrowRight size={18} />
-              </Button>
-            </div>
-
-            <div className="pt-8 border-t border-neutral-200 flex items-center gap-6">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full border-2 border-white bg-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-500"
-                  >
-                    U{i}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm font-medium text-neutral-500">
-                Confiado por mais de 2.000 minimalistas
-              </p>
+                Comecar Gratuitamente
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 px-6 py-3 text-zinc-600 font-medium hover:text-zinc-900 transition-colors"
+              >
+                Ja tenho conta
+              </Link>
             </div>
           </div>
 
           <div className="relative">
-            <div className="absolute -top-10 -right-10 w-24 h-24 bg-neutral-100 pattern-dots opacity-50"></div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-neutral-50 rounded-full blur-3xl"></div>
-
-            <ChatInterface />
+            <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-amber-50 rounded-full blur-3xl opacity-60"></div>
+            <ChatDemo />
           </div>
         </div>
       </section>
 
-      <section id="personalities" className="py-24 border-t border-neutral-100">
+      {/* Features */}
+      <section id="recursos" className="py-24 bg-white border-t border-zinc-100">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-16 md:flex justify-between items-end">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-                Personalidades Distintas.
-              </h2>
-              <p className="text-neutral-500 max-w-md">
-                Mude de contexto instantaneamente. Da revisão de código à
-                escrita criativa, o Simple adapta seu tom e utilidade ao seu
-                modo atual.
-              </p>
-            </div>
-            <Button variant="outline" className="mt-6 md:mt-0">
-              Explorar Todas as Personas
-            </Button>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold tracking-tight font-serif mb-4">
+              Tudo que voce precisa para estudar melhor
+            </h2>
+            <p className="text-zinc-500 text-lg">
+              Ferramentas pensadas para quem leva os estudos a serio.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="group p-6 bg-zinc-50 border border-zinc-100 rounded-xl transition-all duration-200 hover:border-zinc-200 hover:shadow-sm"
+              >
+                <div className="w-10 h-10 rounded-lg bg-white border border-zinc-200 flex items-center justify-center mb-4 group-hover:bg-zinc-900 group-hover:text-white group-hover:border-zinc-900 transition-colors">
+                  <feature.icon size={20} />
+                </div>
+                <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Como Funciona */}
+      <section
+        id="como-funciona"
+        className="py-24 bg-zinc-50 border-t border-zinc-100"
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold tracking-tight font-serif mb-4">
+              Simples de comecar
+            </h2>
+            <p className="text-zinc-500 text-lg">
+              Tres passos para transformar seus documentos em conhecimento ativo.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 bg-black text-white rounded-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-32 bg-neutral-800/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-neutral-700/50 transition-all"></div>
-              <Terminal className="w-10 h-10 mb-6 text-neutral-400" />
-              <h3 className="text-xl font-bold font-mono mb-2">/dev/bot</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed mb-6">
-                Técnico, preciso e conciso. Ideal para depuração de código,
-                revisões de arquitetura e comandos CLI. Sem enrolação.
-              </p>
-              <ul className="space-y-2 text-xs font-mono text-neutral-500">
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>{" "}
-                  Realce de sintaxe
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-green-500 rounded-full"></div>{" "}
-                  Dicas de refatoração
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-8 border border-neutral-200 rounded-xl hover:border-black transition-colors group bg-neutral-50">
-              <PenTool className="w-10 h-10 mb-6 text-black" />
-              <h3 className="text-xl font-bold font-mono mb-2">A Musa</h3>
-              <p className="text-neutral-600 text-sm leading-relaxed mb-6">
-                Criativo, expansivo e reflexivo. Perfeito para brainstorming,
-                rascunhar ensaios ou explorar conceitos abstratos.
-              </p>
-              <ul className="space-y-2 text-xs font-mono text-neutral-500">
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-black rounded-full"></div> Ajuste
-                  de tom
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-black rounded-full"></div> Insights
-                  criativos
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-8 border border-neutral-200 rounded-xl hover:border-black transition-colors group bg-white">
-              <Layout className="w-10 h-10 mb-6 text-black" />
-              <h3 className="text-xl font-bold font-mono mb-2">
-                O Estrategista
-              </h3>
-              <p className="text-neutral-600 text-sm leading-relaxed mb-6">
-                Estruturado, analítico e orientado a objetivos. Ajuda no
-                planejamento de projetos, OKRs e na divisão de tarefas
-                complexas.
-              </p>
-              <ul className="space-y-2 text-xs font-mono text-neutral-500">
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-black rounded-full"></div> Itens de
-                  ação
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-black rounded-full"></div> Geração
-                  de roadmap
-                </li>
-              </ul>
-            </div>
+            {steps.map((step) => (
+              <div key={step.number} className="relative text-center">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white border border-zinc-200 mb-6">
+                  <step.icon size={24} className="text-zinc-700" />
+                </div>
+                <span className="block text-xs font-mono text-zinc-400 mb-2">
+                  Passo {step.number}
+                </span>
+                <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed max-w-xs mx-auto">
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* CTA */}
       <section
-        id="integrations"
-        className="py-24 bg-black text-white relative overflow-hidden"
+        id="comecar"
+        className="py-24 bg-white border-t border-zinc-100"
       >
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute right-0 top-0 w-96 h-96 bg-neutral-800 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-6 tracking-tight">
-              Conectado ao seu fluxo de trabalho.
-            </h2>
-            <p className="text-neutral-400 text-lg">
-              Não apenas converse. Aja. O Simple se conecta profundamente com as
-              ferramentas que você usa todos os dias, permitindo buscar status,
-              acionar builds e muito mais.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-black">
-            <IntegrationCard
-              name="GitHub"
-              description="Verifique status de PRs, revise diffs e gerencie issues diretamente da interface de chat."
-              icon={<Github size={24} />}
-            />
-            <IntegrationCard
-              name="Vercel"
-              description="Monitore deploys, verifique logs de build e faça rollback instantaneamente via linguagem natural."
-              icon={<Zap size={24} />}
-            />
-            <IntegrationCard
-              name="Linear"
-              description="Crie tickets, atualize status e consulte a velocidade do projeto sem sair da conversa."
-              icon={<Code2 size={24} />}
-            />
-            <IntegrationCard
-              name="Notion"
-              description="Resuma reuniões e salve-as diretamente na base de conhecimento da sua equipe."
-              icon={<MessageSquare size={24} />}
-            />
-            <IntegrationCard
-              name="Slack"
-              description="Encaminhe resumos importantes para canais da equipe ou envie DMs para usuários específicos."
-              icon={<Terminal size={24} />}
-            />
-            <div className="bg-neutral-900 border border-neutral-800 p-6 flex items-center justify-center flex-col text-center text-white rounded-lg">
-              <p className="font-mono text-sm text-neutral-400 mb-4">
-                ...e muito mais via API.
-              </p>
-              <Button
-                variant="outline"
-                className="border-neutral-600 text-white hover:bg-white hover:text-black"
-              >
-                Solicitar Integração
-              </Button>
-            </div>
-          </div>
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight font-serif mb-4">
+            Pronto para estudar de verdade?
+          </h2>
+          <p className="text-zinc-500 text-lg mb-8">
+            Seus documentos, sua IA, seu ritmo.
+          </p>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-lg hover:bg-zinc-800 transition-colors text-base"
+          >
+            Criar Conta Gratuita
+            <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 
-      <footer className="py-12 border-t border-neutral-200 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex flex-col gap-2">
-            <span className="text-xl font-bold tracking-tighter">Simple.</span>
-            <p className="text-xs text-neutral-500 font-mono">
-              © 2024 Simple AI Inc. Todos os direitos reservados.
+      {/* Footer */}
+      <footer className="py-10 border-t border-zinc-200 bg-zinc-50">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col items-center sm:items-start gap-1">
+            <img src="/logo.svg" alt="OrbMind" className="h-6 w-auto" />
+            <p className="text-xs text-zinc-400">
+              &copy; 2026 OrbMind. Todos os direitos reservados.
             </p>
           </div>
-
-          <div className="flex gap-8 text-sm font-medium text-neutral-600">
-            <a href="#" className="hover:text-black">
-              Twitter
-            </a>
-            <a href="#" className="hover:text-black">
-              GitHub
-            </a>
-            <a href="#" className="hover:text-black">
-              Discord
-            </a>
-          </div>
-
-          <div className="flex gap-4">
-            <a href="#" className="text-xs text-neutral-400 hover:underline">
+          <div className="flex gap-6">
+            <a
+              href="#"
+              className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+            >
               Privacidade
             </a>
-            <a href="#" className="text-xs text-neutral-400 hover:underline">
+            <a
+              href="#"
+              className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+            >
               Termos
             </a>
           </div>

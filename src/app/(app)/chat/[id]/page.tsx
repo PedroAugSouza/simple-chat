@@ -1,12 +1,25 @@
 import { Chat } from "@/modules/chat";
-import { chatService } from "@/services/chat";
+import { getChat } from "../actions";
+import { notFound } from "next/navigation";
 
 export default async function ChatPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await props.params;
 
-  const { data: chat } = await chatService.load(id);
+  const result = await getChat(id);
 
-  return <Chat id={id} name={chat.name} initialMessages={chat.messages} />;
+  if (!result.success || !result.data) {
+    notFound();
+  }
+
+  const chat = result.data;
+
+  return (
+    <Chat
+      id={chat.id}
+      name={chat.name || "New Chat"}
+      initialMessages={chat.messages}
+    />
+  );
 }

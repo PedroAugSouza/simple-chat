@@ -9,7 +9,7 @@ export const POST = async (req: Request) => {
 
   const openrouter = createOpenRouter({
     apiKey:
-      "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",
+      "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",
   });
 
   const result = await generateText({

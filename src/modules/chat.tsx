@@ -3,18 +3,20 @@
 import { Card } from "@/components/ui/card";
 import { useChat } from "@ai-sdk/react";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, Send } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import {
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputFooter,
+  PromptInputTools,
+  PromptInputSubmit,
+} from "@/components/ai-elements/prompt-input";
 
 import { useLayoutEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { DefaultChatTransport } from "ai";
 import { Separator } from "@/components/ui/separator";
 import { agentsService } from "@/services/agents";
-import { chatService } from "@/services/chat";
-import { mutate } from "swr";
 import { MessageAssistant } from "@/components/commom/message-assistant.chat";
 import { MessageUser } from "@/components/commom/message-user.chat";
 import {
@@ -22,18 +24,12 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { usePathname, useRouter } from "next/navigation";
 import { MyUIMessage } from "@/types";
+
 import { Button } from "@/components/ui/button";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { MindIcon } from "@/icons";
 import { format } from "date-fns";
-
-const chatSchema = z.object({
-  userMessage: z.string().nonempty(),
-});
-
-type Form = z.infer<typeof chatSchema>;
+import { deleteChat, updateChat } from "@/app/(app)/chat/actions";
 
 export function Chat({
   id,
@@ -44,9 +40,6 @@ export function Chat({
   initialMessages?: MyUIMessage[];
   name: string;
 }) {
-  const pathname = usePathname();
-  const { push } = useRouter();
-
   const endRef = useRef<HTMLDivElement>(null);
 
   const titleRef = useRef<HTMLButtonElement>(null);
@@ -66,17 +59,12 @@ export function Chat({
         message: lastPart.text,
       });
 
-      await chatService.update(id!, {
+      await updateChat(id!, {
         name: title,
       });
-
-      mutate("get-chats");
     },
   });
 
-  const { register, handleSubmit, reset } = useForm<Form>({
-    resolver: zodResolver(chatSchema),
-  });
 
   const scrollToBottom = () => {
     endRef.current?.scrollIntoView({
@@ -90,8 +78,8 @@ export function Chat({
   }, [messages, status]);
 
   return (
-    <Card className=" flex-1 border py-2 shadow-none  gap-0 rounded-r-xl flex flex-col items-center justify-between bg-transparent ">
-      <header className="w-full  px-4 text-gray-800 font-medium mb-1 grid place-items-center">
+    <Card className="flex-1 border border-zinc-300 py-2 shadow-none gap-0 rounded-r-xl flex flex-col items-center justify-between bg-white">
+      <header className="w-full  px-4 text-foreground font-medium mb-1 grid place-items-center">
         <Popover>
           <PopoverTrigger
             ref={titleRef}
@@ -107,17 +95,9 @@ export function Chat({
           >
             <button
               className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
-              onClick={() => {
-                chatService.delete(id!).then(() => {
-                  const chatId = pathname?.split("/")[2];
-                  if (chatId === id) {
-                    push("/chat");
-                  }
-                  mutate("get-chats");
-                });
-              }}
+              onClick={() => deleteChat(id!)}
             >
-              Exluir
+              Excluir
             </button>
           </PopoverContent>
         </Popover>
@@ -141,22 +121,11 @@ export function Chat({
               );
             })}
             {status === "submitted" && (
-              <div className="group transition-all mt-4">
-                <div className=" gap-2 flex justify-start">
-                  <MindIcon className="rounded relative z-10" />
-                  <div>
-                    <div className="items-center flex flex-row gap-1 text-xs font-mono">
-                      <span>OrbMind</span>
-                      <span className="size-1 bg-black" />
-                      <span>{format(new Date(), "HH:mm")}</span>
-                    </div>
-                    <div className="h-full w-full max-w-5xl text-sm ">
-                      <Shimmer duration={1}>Pensando...</Shimmer>
-                    </div>
-                  </div>
-                </div>
+              <div className="w-full max-w-5xl mt-4">
+                <Shimmer className="text-sm" duration={1}>
+                  Thinking...
+                </Shimmer>
               </div>
-              // <Shimmer duration={1}> Carregando...</Shimmer>
             )}
           </AnimatePresence>
 
@@ -164,34 +133,30 @@ export function Chat({
         </div>
       </section>
 
-      <form
-        className="w-full py-2  flex items-center justify-center gap-2"
-        onSubmit={handleSubmit((data) => {
-          sendMessage({
-            text: data.userMessage,
-            metadata: {
-              createdAt: new Date(),
-            },
-          });
-          reset();
-        })}
-      >
-        <div className="w-full max-w-5xl flex gap-2 border border-gray-300 rounded-full overflow-hidden h-10">
-          <input
-            placeholder="Enviar mensagem..."
-            disabled={status === "streaming"}
-            className="border-none outline-none ring-none size-full px-4"
-            autoComplete="off"
-            {...register("userMessage")}
-          />
-          <button
-            className="px-3 cursor-pointer hover:bg-gray-100 flex justify-center items-center text-gray-800"
-            disabled={status === "streaming"}
+      <div className="w-full py-2 flex items-center justify-center">
+        <div className="w-full max-w-5xl">
+          <PromptInput
+            onSubmit={(message) => {
+              if (!message.text.trim()) return;
+              sendMessage({
+                text: message.text,
+                metadata: {
+                  createdAt: new Date(),
+                },
+              });
+            }}
           >
-            <Send size={18} className="mr-1" />
-          </button>
+            <PromptInputTextarea
+              placeholder="Enviar mensagem..."
+              disabled={status === "streaming"}
+            />
+            <PromptInputFooter>
+              <PromptInputTools />
+              <PromptInputSubmit status={status} />
+            </PromptInputFooter>
+          </PromptInput>
         </div>
-      </form>
+      </div>
     </Card>
   );
 }

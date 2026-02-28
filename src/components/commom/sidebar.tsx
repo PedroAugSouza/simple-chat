@@ -1,148 +1,39 @@
-"use client";
-import { chatService } from "@/services/chat";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
-import {
-  Plus,
-  EllipsisVertical,
-  Cog,
-  ArrowLeft,
-  Newspaper,
-} from "lucide-react";
-import useSWR, { mutate } from "swr";
-import { usePathname, useRouter } from "next/navigation";
-import { getSession } from "@/utils/get-session";
-import Link from "next/link";
-import { Separator } from "../ui/separator";
-import { Badge } from "../ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { OrbMindIcon } from "@/icons";
+import { prisma } from "@/lib/prisma";
+import { getSessionServer } from "@/utils/get-session.server";
+import { SidebarClient } from "./sidebar.client";
+import { Suspense } from "react";
+import { Shimmer } from "../ai-elements/shimmer";
 
-export const Sidebar = () => {
-  const pathname = usePathname();
-  const { push, back } = useRouter();
+export async function Sidebar() {
+  const session = await getSessionServer();
 
-  const session = getSession();
+  if (!session) {
+    return null;
+  }
 
-  const sessionId = session?.id;
-
-  const { data } = useSWR("get-chats", async () => {
-    const chats = await chatService.getMany(sessionId!);
-    return chats;
+  const chats = await prisma.chat.findMany({
+    where: {
+      userId: session.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
+    },
   });
 
-  const chats = data?.data;
-
-  const handleCreateChat = async () => {
-    const id = await chatService.create(sessionId ?? "");
-
-    mutate("get-chats");
-    push(`/chat/${id}`);
-  };
   return (
-    <aside className="h-full flex flex-col border border-r-transparent w-72 rounded-l-xl p-2 overflow-hidden">
-      {pathname !== "/chat/settings" ? (
-        <>
-          <div className="flex items-center">
-            <OrbMindIcon height={40} width={90} />
-            <Badge className="rounded-full py-0 ">alpha v1</Badge>
-          </div>
-          <Separator className="mb-2" />
-          <button
-            className="flex items-center justify-start gap-2 py-1 px-4 hover:bg-white cursor-pointer rounded-md text-sm mt-1 disabled:cursor-not-allowed"
-            disabled
-          >
-            <Newspaper size={16} />
-            <span>Feed</span>
-            <Badge className="ml-auto " variant={"secondary"}>
-              em breve
-            </Badge>
-          </button>
-          <button
-            onClick={handleCreateChat}
-            className="flex items-center justify-start gap-2 py-1 px-4 hover:bg-white cursor-pointer rounded-md text-sm mt-1"
-          >
-            <Plus size={16} />
-            <span>Criar chat</span>
-          </button>
-
-          <ul className="flex flex-col w-full flex-1 overflow-auto mt-2">
-            {chats?.map((chat) => (
-              <Tooltip key={chat.id} delayDuration={3000}>
-                <TooltipTrigger className="flex flex-row justify-between group hover:bg-white rounded py-1 px-2 group w-full">
-                  <Link
-                    href={`/chat/${chat.id}`}
-                    className="cursor-pointer rounded-l-md w-full pl-2 text-foreground text-start truncate"
-                  >
-                    {chat.name}
-                  </Link>
-
-                  <Popover>
-                    <PopoverTrigger className="text-zinc-600 cursor-pointer group-hover:opacity-100 opacity-0">
-                      <EllipsisVertical size={18} />
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="p-2 rounded-none w-28 bg-background/80 backdrop-blur-[2px] flex flex-col"
-                      side="right"
-                    >
-                      <button
-                        className="w-full flex items-start p-1 rounded cursor-pointer text-foreground text-sm hover:bg-accent/60"
-                        onClick={() => {
-                          chatService.delete(chat.id).then(() => {
-                            const chatId = pathname?.split("/")[2];
-                            if (chatId === chat.id) {
-                              push("/chat");
-                            }
-                            mutate("get-chats");
-                          });
-                        }}
-                      >
-                        Exluir
-                      </button>
-                    </PopoverContent>
-                  </Popover>
-                </TooltipTrigger>
-                <TooltipContent side="right">{chat.name}</TooltipContent>
-              </Tooltip>
-            ))}
-          </ul>
-          <Link
-            href="/chat/settings"
-            className="flex items-center justify-center gap-2 p-2 px-4 bg-foreground cursor-pointer rounded text-accent"
-          >
-            <Cog size={18} />
-            <span>Configurações</span>
-          </Link>
-        </>
-      ) : (
-        <>
-          <button
-            className="flex items-center justify-start gap-2 py-2 px-4 hover:bg-white cursor-pointer rounded-md text-sm mb-1"
-            onClick={back}
-          >
-            <ArrowLeft size={18} />
-            <span>Voltar</span>
-          </button>
-          <Separator />
-          <ul className="flex flex-col w-full flex-1">
-            <Link
-              href="#models"
-              className="flex items-start justify-start py-1 px-4 first:mt-2 hover:bg-white cursor-pointer rounded-md flex-col"
-            >
-              Perfil
-            </Link>
-            <Link
-              href="#models"
-              className="flex items-start justify-start py-1 px-4 first:mt-2 hover:bg-white cursor-pointer rounded-md flex-col"
-            >
-              Modelo
-            </Link>
-          </ul>
-        </>
-      )}
-    </aside>
+    <Suspense
+      fallback={
+        <div className="w-72 border-r p-4">
+          <Shimmer>Loading chats...</Shimmer>
+        </div>
+      }
+    >
+      <SidebarClient initialChats={chats} userId={session.id} />
+    </Suspense>
   );
-};
+}
