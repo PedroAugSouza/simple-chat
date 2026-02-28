@@ -10,7 +10,7 @@ import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 import { weather } from "@/ai/tools/weather";
 import { MyUIMessage } from "@/types";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { createOpenRouter, openrouter } from "@openrouter/ai-sdk-provider";
 import { SYSTEM_PROMPT } from "@/ai/prompts/chat";
 import { turso } from "@/lib/turso";
 import { generateEmbedding } from "@/lib/embeddings";
@@ -73,11 +73,6 @@ END OF CONTEXT BLOCK
       // Continue without context if retrieval fails
     }
   }
-
-  const openrouter = createOpenRouter({
-    apiKey:
-      "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",
-  });
 
   const result = streamText({
     model: openrouter("z-ai/glm-4.5-air:free"),

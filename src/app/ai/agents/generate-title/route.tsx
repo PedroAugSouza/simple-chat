@@ -1,16 +1,12 @@
 import { anthropic } from "@ai-sdk/anthropic";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { openrouter } from "@openrouter/ai-sdk-provider";
+
 import { generateText, UIMessage } from "ai";
 import { NextResponse } from "next/server";
 
 // "agent" para gerar titulos
 export const POST = async (req: Request) => {
   const { message }: { message: string } = await req.json();
-
-  const openrouter = createOpenRouter({
-    apiKey:
-      "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",
-  });
 
   const result = await generateText({
     model: openrouter("z-ai/glm-4.5-air:free"),
