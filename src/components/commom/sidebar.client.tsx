@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Separator } from "../ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { createChat, deleteChat, logout } from "@/app/(app)/chat/actions";
+import { OrbMindIcon } from "@/components/commom/orbmind-icon";
 import { useTransition } from "react";
 
 interface SidebarClientProps {
@@ -43,7 +44,7 @@ export const SidebarClient = ({ initialChats, userId }: SidebarClientProps) => {
   return (
     <aside className="h-full flex flex-col border-r border-zinc-300 w-72 bg-white p-3 overflow-hidden">
       <div className="flex items-center gap-2 px-2 py-2 mb-2">
-        <img src="/icon.svg" alt="OrbMind" className="h-5 w-5" />
+        <OrbMindIcon className="h-5 w-5" />
         <span className="font-semibold text-sm tracking-tight">
           OrbMind
         </span>

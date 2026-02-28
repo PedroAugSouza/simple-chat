@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Brain, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
-// owl icon from public/icon.svg
+import { OrbMindIcon } from "@/components/commom/orbmind-icon";
 import { format } from "date-fns";
 import { MyUIMessage } from "@/types";
 import { Markdown } from "./markdown";
@@ -73,11 +73,7 @@ export const MessageAssistant = (
   return (
     <div key={message.id} className="group transition-all mt-4">
       <div key={message.id} className=" gap-2 flex justify-start">
-        <img
-          src="/icon.svg"
-          alt="OrbMind"
-          className="h-6 w-6 rounded relative z-10"
-        />
+        <OrbMindIcon className="h-6 w-6 rounded relative z-10" />
 
         <div>
           <div className="items-center flex flex-row gap-1 text-xs font-mono">

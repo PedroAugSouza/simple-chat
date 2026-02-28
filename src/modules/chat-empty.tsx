@@ -8,6 +8,7 @@ import {
   PromptInputTools,
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
+import { OrbMindIcon } from "@/components/commom/orbmind-icon";
 import { useTransition } from "react";
 
 export function ChatEmpty() {
@@ -20,7 +21,7 @@ export function ChatEmpty() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center h-full text-zinc-500 p-8 bg-zinc-50">
       <div className="bg-accent/30 p-4 rounded-full mb-6">
-        <img src="/icon.svg" alt="OrbMind" className="h-12 w-12" />
+        <OrbMindIcon className="h-12 w-12" />
       </div>
 
       <h1 className="text-2xl font-medium text-zinc-900 mb-2 tracking-tight">

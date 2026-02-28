@@ -16,6 +16,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { OrbMindLogo } from "@/components/commom/orbmind-logo";
 
 const BackgroundGrid: React.FC = () => {
   return (
@@ -147,7 +148,7 @@ const Header: React.FC = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <img src="/logo.svg" alt="OrbMind" className="h-8 w-auto" />
+        <OrbMindLogo className="h-8 w-auto" />
 
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
@@ -403,7 +404,7 @@ export default function LandingPage() {
       <footer className="py-10 border-t border-zinc-200 bg-zinc-50">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center sm:items-start gap-1">
-            <img src="/logo.svg" alt="OrbMind" className="h-6 w-auto" />
+            <OrbMindLogo className="h-6 w-auto" />
             <p className="text-xs text-zinc-400">
               &copy; 2026 OrbMind. Todos os direitos reservados.
             </p>

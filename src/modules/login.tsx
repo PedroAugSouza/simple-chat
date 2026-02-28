@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
+import { OrbMindLogo } from "@/components/commom/orbmind-logo";
 import z from "zod";
 
 const loginSchema = z.object({
@@ -43,7 +44,7 @@ export function LoginModule() {
   return (
     <main className="h-screen grid place-items-center leading-relaxed bg-zinc-50">
       <Card className="p-6 rounded-xl w-md gap-0 bg-white border-zinc-300">
-        <img src="/logo.svg" alt="OrbMind" className="h-8 w-auto" />
+        <OrbMindLogo className="h-8 w-auto" />
         <CardDescription className="font-medium font-mono mt-1">
           Seu espaço de estudo com IA.
         </CardDescription>
